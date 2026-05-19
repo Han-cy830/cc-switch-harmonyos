@@ -90,7 +90,7 @@
       "error": false
     },
     "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\service\\DatabaseService.ets": {
-      "mtimeMs": 1779171795785.422,
+      "mtimeMs": 1779172808340.109,
       "children": [
         "D:\\deveco\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.relationalStore.d.ts",
         "D:\\deveco\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts"
@@ -103,13 +103,10 @@
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\service\\McpService.ets",
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\pages\\SkillsPage.ets"
       ],
-      "error": true,
-      "errorCodes": [
-        28040
-      ]
+      "error": false
     },
     "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\service\\SettingsService.ets": {
-      "mtimeMs": 1779171854159.6653,
+      "mtimeMs": 1779172851043.8,
       "children": [
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\service\\DatabaseService.ets",
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\model\\Types.ets"
@@ -118,13 +115,7 @@
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\entryability\\EntryAbility.ets",
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\pages\\SettingsPage.ets"
       ],
-      "error": true,
-      "errorCodes": [
-        38,
-        99,
-        2352,
-        28040
-      ]
+      "error": false
     },
     "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\entryability\\EntryAbility.ets": {
       "mtimeMs": 1779171875010.12,
@@ -1580,7 +1571,10 @@
       ],
       "parent": [
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\service\\DatabaseService.ets",
-        "D:\\deveco\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.sendableRelationalStore.d.ets"
+        "D:\\deveco\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.sendableRelationalStore.d.ets",
+        "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\service\\ProviderService.ets",
+        "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\service\\PromptService.ets",
+        "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\service\\McpService.ets"
       ],
       "error": false
     },
@@ -1616,7 +1610,7 @@
       "error": false
     },
     "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\model\\Types.ets": {
-      "mtimeMs": 1779171795690.772,
+      "mtimeMs": 1779172786226.1436,
       "children": [],
       "parent": [
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\service\\SettingsService.ets",
@@ -1634,21 +1628,26 @@
       "error": false
     },
     "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\pages\\Index.ets": {
-      "mtimeMs": 1779171875096.4624,
+      "mtimeMs": 1779172917985.6104,
       "children": [
-        "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\model\\Types.ets"
+        "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\model\\Types.ets",
+        "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\pages\\ProviderPage.ets",
+        "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\pages\\SettingsPage.ets",
+        "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\pages\\PromptPage.ets",
+        "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\pages\\McpPage.ets",
+        "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\pages\\SkillsPage.ets",
+        "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\pages\\SessionsPage.ets"
       ],
       "parent": [],
       "error": true,
       "errorCodes": [
-        38,
-        2304,
-        2552
+        2724
       ]
     },
     "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\service\\ProviderService.ets": {
-      "mtimeMs": 1779171854064.454,
+      "mtimeMs": 1779172850967.676,
       "children": [
+        "D:\\deveco\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.relationalStore.d.ts",
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\service\\DatabaseService.ets",
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\model\\Types.ets"
       ],
@@ -1657,41 +1656,36 @@
       ],
       "error": true,
       "errorCodes": [
-        99,
-        28,
         28040,
-        2503
+        2304
       ]
     },
     "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\pages\\ProviderPage.ets": {
-      "mtimeMs": 1779171949844.273,
+      "mtimeMs": 1779172965469.8784,
       "children": [
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\model\\Types.ets",
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\service\\ProviderService.ets"
       ],
-      "parent": [],
-      "error": true,
-      "errorCodes": [
-        99,
-        2304
-      ]
+      "parent": [
+        "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\pages\\Index.ets"
+      ],
+      "error": false
     },
     "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\pages\\SettingsPage.ets": {
-      "mtimeMs": 1779171949889.8423,
+      "mtimeMs": 1779173018626.944,
       "children": [
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\model\\Types.ets",
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\service\\SettingsService.ets"
       ],
-      "parent": [],
-      "error": true,
-      "errorCodes": [
-        38,
-        2322
-      ]
+      "parent": [
+        "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\pages\\Index.ets"
+      ],
+      "error": false
     },
     "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\service\\PromptService.ets": {
-      "mtimeMs": 1779171854311.4705,
+      "mtimeMs": 1779172897601.295,
       "children": [
+        "D:\\deveco\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.relationalStore.d.ts",
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\service\\DatabaseService.ets",
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\model\\Types.ets"
       ],
@@ -1700,25 +1694,24 @@
       ],
       "error": true,
       "errorCodes": [
-        28040,
-        2503
+        28040
       ]
     },
     "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\pages\\PromptPage.ets": {
-      "mtimeMs": 1779172012509.0637,
+      "mtimeMs": 1779173018711.1106,
       "children": [
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\model\\Types.ets",
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\service\\PromptService.ets"
       ],
-      "parent": [],
-      "error": true,
-      "errorCodes": [
-        99
-      ]
+      "parent": [
+        "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\pages\\Index.ets"
+      ],
+      "error": false
     },
     "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\service\\McpService.ets": {
-      "mtimeMs": 1779171854223.3276,
+      "mtimeMs": 1779172897496.0574,
       "children": [
+        "D:\\deveco\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.relationalStore.d.ts",
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\service\\DatabaseService.ets",
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\model\\Types.ets"
       ],
@@ -1727,42 +1720,39 @@
       ],
       "error": true,
       "errorCodes": [
-        28040,
-        2503
+        28040
       ]
     },
     "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\pages\\McpPage.ets": {
-      "mtimeMs": 1779172012565.7227,
+      "mtimeMs": 1779173069600.1335,
       "children": [
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\model\\Types.ets",
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\service\\McpService.ets"
       ],
-      "parent": [],
-      "error": true,
-      "errorCodes": [
-        99,
-        28,
-        2322
-      ]
+      "parent": [
+        "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\pages\\Index.ets"
+      ],
+      "error": false
     },
     "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\pages\\SkillsPage.ets": {
-      "mtimeMs": 1779172012646.3552,
+      "mtimeMs": 1779173069725.5525,
       "children": [
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\model\\Types.ets",
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\service\\DatabaseService.ets"
       ],
-      "parent": [],
-      "error": true,
-      "errorCodes": [
-        28040
-      ]
+      "parent": [
+        "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\pages\\Index.ets"
+      ],
+      "error": false
     },
     "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\pages\\SessionsPage.ets": {
-      "mtimeMs": 1779172012761.1646,
+      "mtimeMs": 1779173069877.2637,
       "children": [
         "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\model\\Types.ets"
       ],
-      "parent": [],
+      "parent": [
+        "D:\\cc-switch-harmonyos\\entry\\src\\main\\ets\\pages\\Index.ets"
+      ],
       "error": false
     },
     "D:\\deveco\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\action_sheet.d.ts": {

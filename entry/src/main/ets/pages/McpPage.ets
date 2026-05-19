@@ -16,6 +16,7 @@ export struct McpPage {
   async loadData(): Promise<void> { this.servers = await mcpService.getAll(); }
 
   build() {
+    Stack() {
     Column() {
       Row() {
         Column() {
@@ -55,9 +56,12 @@ export struct McpPage {
       }
     }.width('100%').height('100%')
 
-    if (this.showDialog) {
-      this.DialogContent()
+      if (this.showDialog) {
+        this.DialogContent()
+      }
     }
+    .width('100%')
+    .height('100%')
   }
 
   @Builder

@@ -1,4 +1,4 @@
-import { APP_CONFIGS, AppId, AppConfig, getAppConfigs } from '../model/Types';
+import { AppId, AppConfig, getAppConfigs } from '../model/Types';
 import { ProviderPage } from './ProviderPage';
 import { SettingsPage } from './SettingsPage';
 import { PromptPage } from './PromptPage';

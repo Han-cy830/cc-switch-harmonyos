@@ -23,6 +23,7 @@ export struct PromptPage {
   }
 
   build() {
+    Stack() {
     Column() {
       Row() {
         Column() {
@@ -62,9 +63,12 @@ export struct PromptPage {
       }
     }.width('100%').height('100%')
 
-    if (this.showDialog) {
-      this.DialogContent()
+      if (this.showDialog) {
+        this.DialogContent()
+      }
     }
+    .width('100%')
+    .height('100%')
   }
 
   @Builder

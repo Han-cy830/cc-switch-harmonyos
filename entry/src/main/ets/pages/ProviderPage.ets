@@ -34,137 +34,141 @@ export struct ProviderPage {
   }
 
   build() {
-    Column() {
-      Row() {
-        Column() {
-          Text(this.getAppCfg().icon + ' ' + this.getAppCfg().label)
-            .fontSize(22)
-            .fontWeight(FontWeight.Bold)
-          Text(this.getAppCfg().description)
-            .fontSize(13)
-            .fontColor('#999')
-            .margin({ top: 4 })
-        }
-        .alignItems(HorizontalAlign.Start)
-        Blank()
-        Button('+ 添加提供商')
-          .type(ButtonType.Capsule)
-          .backgroundColor('#FF6B35')
-          .fontColor('#FFF')
-          .onClick(() => {
-            this.isEdit = false;
-            this.editName = '';
-            this.editUrl = '';
-            this.editKey = '';
-            this.editModel = '';
-            this.showDialog = true;
-          })
-      }
-      .width('100%')
-      .padding({ left: 24, right: 24, top: 20, bottom: 16 })
-
-      if (this.providers.length === 0) {
-        Column() {
-          Text('暂无提供商').fontSize(16).fontColor('#999')
-          Button('添加第一个提供商')
+    Stack() {
+      Column() {
+        Row() {
+          Column() {
+            Text(this.getAppCfg().icon + ' ' + this.getAppCfg().label)
+              .fontSize(22)
+              .fontWeight(FontWeight.Bold)
+            Text(this.getAppCfg().description)
+              .fontSize(13)
+              .fontColor('#999')
+              .margin({ top: 4 })
+          }
+          .alignItems(HorizontalAlign.Start)
+          Blank()
+          Button('+ 添加提供商')
             .type(ButtonType.Capsule)
             .backgroundColor('#FF6B35')
             .fontColor('#FFF')
-            .margin({ top: 16 })
             .onClick(() => {
+              this.isEdit = false;
+              this.editName = '';
+              this.editUrl = '';
+              this.editKey = '';
+              this.editModel = '';
               this.showDialog = true;
             })
         }
         .width('100%')
-        .layoutWeight(1)
-        .justifyContent(FlexAlign.Center)
-      } else {
-        List({ space: 12 }) {
-          ForEach(this.providers, (p: Provider) => {
-            ListItem() {
-              Row() {
-                Circle({ width: 12, height: 12 }).fill(p.isCurrent ? '#4CAF50' : '#E0E0E0')
-                Column() {
-                  Row() {
-                    Text(p.name).fontSize(16).fontWeight(FontWeight.Medium)
-                    if (p.isCurrent) {
-                      Text('当前')
-                        .fontSize(11)
-                        .fontColor('#FFF')
-                        .backgroundColor('#4CAF50')
-                        .borderRadius(4)
-                        .padding({ left: 6, right: 6, top: 2, bottom: 2 })
-                        .margin({ left: 8 })
+        .padding({ left: 24, right: 24, top: 20, bottom: 16 })
+
+        if (this.providers.length === 0) {
+          Column() {
+            Text('暂无提供商').fontSize(16).fontColor('#999')
+            Button('添加第一个提供商')
+              .type(ButtonType.Capsule)
+              .backgroundColor('#FF6B35')
+              .fontColor('#FFF')
+              .margin({ top: 16 })
+              .onClick(() => {
+                this.showDialog = true;
+              })
+          }
+          .width('100%')
+          .layoutWeight(1)
+          .justifyContent(FlexAlign.Center)
+        } else {
+          List({ space: 12 }) {
+            ForEach(this.providers, (p: Provider) => {
+              ListItem() {
+                Row() {
+                  Circle({ width: 12, height: 12 }).fill(p.isCurrent ? '#4CAF50' : '#E0E0E0')
+                  Column() {
+                    Row() {
+                      Text(p.name).fontSize(16).fontWeight(FontWeight.Medium)
+                      if (p.isCurrent) {
+                        Text('当前')
+                          .fontSize(11)
+                          .fontColor('#FFF')
+                          .backgroundColor('#4CAF50')
+                          .borderRadius(4)
+                          .padding({ left: 6, right: 6, top: 2, bottom: 2 })
+                          .margin({ left: 8 })
+                      }
+                    }
+                    if (p.baseUrl.length > 0) {
+                      Text(p.baseUrl).fontSize(12).fontColor('#888').margin({ top: 4 }).maxLines(1)
+                    }
+                    if (p.model.length > 0) {
+                      Text('模型: ' + p.model).fontSize(12).fontColor('#888').margin({ top: 2 })
                     }
                   }
-                  if (p.baseUrl.length > 0) {
-                    Text(p.baseUrl).fontSize(12).fontColor('#888').margin({ top: 4 }).maxLines(1)
-                  }
-                  if (p.model.length > 0) {
-                    Text('模型: ' + p.model).fontSize(12).fontColor('#888').margin({ top: 2 })
+                  .alignItems(HorizontalAlign.Start)
+                  .layoutWeight(1)
+                  .margin({ left: 12 })
+                  Row({ space: 8 }) {
+                    Button(p.isCurrent ? '已激活' : '切换')
+                      .type(ButtonType.Capsule)
+                      .backgroundColor(p.isCurrent ? '#E8F5E9' : '#FF6B35')
+                      .fontColor(p.isCurrent ? '#4CAF50' : '#FFF')
+                      .fontSize(12)
+                      .height(32)
+                      .onClick(async () => {
+                        await providerService.switchTo(p.id, this.currentApp);
+                        await this.loadData();
+                      })
+                    Button('编辑')
+                      .type(ButtonType.Capsule)
+                      .backgroundColor('#F0F0F0')
+                      .fontColor('#666')
+                      .fontSize(12)
+                      .height(32)
+                      .onClick(() => {
+                        this.isEdit = true;
+                        this.editId = p.id;
+                        this.editAppType = p.appType;
+                        this.editName = p.name;
+                        this.editUrl = p.baseUrl;
+                        this.editKey = p.apiKey;
+                        this.editModel = p.model;
+                        this.showDialog = true;
+                      })
+                    Button('删除')
+                      .type(ButtonType.Capsule)
+                      .backgroundColor('#FFEBEE')
+                      .fontColor('#F44336')
+                      .fontSize(12)
+                      .height(32)
+                      .onClick(async () => {
+                        await providerService.delete(p.id, this.currentApp);
+                        await this.loadData();
+                      })
                   }
                 }
-                .alignItems(HorizontalAlign.Start)
-                .layoutWeight(1)
-                .margin({ left: 12 })
-                Row({ space: 8 }) {
-                  Button(p.isCurrent ? '已激活' : '切换')
-                    .type(ButtonType.Capsule)
-                    .backgroundColor(p.isCurrent ? '#E8F5E9' : '#FF6B35')
-                    .fontColor(p.isCurrent ? '#4CAF50' : '#FFF')
-                    .fontSize(12)
-                    .height(32)
-                    .onClick(async () => {
-                      await providerService.switchTo(p.id, this.currentApp);
-                      await this.loadData();
-                    })
-                  Button('编辑')
-                    .type(ButtonType.Capsule)
-                    .backgroundColor('#F0F0F0')
-                    .fontColor('#666')
-                    .fontSize(12)
-                    .height(32)
-                    .onClick(() => {
-                      this.isEdit = true;
-                      this.editId = p.id;
-                      this.editAppType = p.appType;
-                      this.editName = p.name;
-                      this.editUrl = p.baseUrl;
-                      this.editKey = p.apiKey;
-                      this.editModel = p.model;
-                      this.showDialog = true;
-                    })
-                  Button('删除')
-                    .type(ButtonType.Capsule)
-                    .backgroundColor('#FFEBEE')
-                    .fontColor('#F44336')
-                    .fontSize(12)
-                    .height(32)
-                    .onClick(async () => {
-                      await providerService.delete(p.id, this.currentApp);
-                      await this.loadData();
-                    })
-                }
+                .width('100%')
+                .padding(16)
+                .backgroundColor('#FFF')
+                .borderRadius(12)
+                .shadow({ radius: 4, color: '#1A000000', offsetX: 0, offsetY: 2 })
               }
-              .width('100%')
-              .padding(16)
-              .backgroundColor('#FFF')
-              .borderRadius(12)
-              .shadow({ radius: 4, color: '#1A000000', offsetX: 0, offsetY: 2 })
-            }
-          })
+            })
+          }
+          .width('100%')
+          .layoutWeight(1)
+          .padding({ left: 24, right: 24 })
         }
-        .width('100%')
-        .layoutWeight(1)
-        .padding({ left: 24, right: 24 })
+      }
+      .width('100%')
+      .height('100%')
+
+      if (this.showDialog) {
+        this.DialogContent()
       }
     }
     .width('100%')
     .height('100%')
-
-    if (this.showDialog) {
-      this.DialogContent()
-    }
   }
 
   @Builder

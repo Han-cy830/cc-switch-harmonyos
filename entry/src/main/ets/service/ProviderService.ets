@@ -1,6 +1,6 @@
 import { relationalStore } from '@kit.ArkData';
 import { dbService } from './DatabaseService';
-import { Provider, AppId } from '../model/Types';
+import { Provider, AppId, ProviderCategory } from '../model/Types';
 
 export class ProviderService {
   async getByApp(appType: AppId): Promise<Provider[]> {
@@ -128,7 +128,7 @@ export class ProviderService {
     p.baseUrl = rs.getString(rs.getColumnIndex('base_url'));
     p.apiKey = rs.getString(rs.getColumnIndex('api_key'));
     p.model = rs.getString(rs.getColumnIndex('model'));
-    p.category = rs.getString(rs.getColumnIndex('category')) as ProviderCategory;
+    p.category = rs.getString(rs.getColumnIndex('category')) as string as ProviderCategory;
     p.iconUrl = rs.getString(rs.getColumnIndex('icon_url'));
     p.color = rs.getString(rs.getColumnIndex('color'));
     p.isCurrent = rs.getLong(rs.getColumnIndex('is_current')) === 1;
