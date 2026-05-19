@@ -1,0 +1,28 @@
+{
+  "modulePathMap": {
+    "entry": "D:\\cc-switch-harmonyos\\entry"
+  },
+  "compileMode": "esmodule",
+  "projectRootPath": "D:\\cc-switch-harmonyos",
+  "nodeModulesPath": "D:\\cc-switch-harmonyos\\entry\\build\\default\\intermediates\\loader_out\\default\\node_modules",
+  "byteCodeHarInfo": {},
+  "declarationEntry": [],
+  "moduleName": "entry",
+  "hspNameOhmMap": {},
+  "harNameOhmMap": {},
+  "packageManagerType": "ohpm",
+  "compileEntry": [
+    "D:\\cc-switch-harmonyos\\entry\\build\\default\\generated\\r\\default\\ResourceTable.ts"
+  ],
+  "otherCompileFiles": [],
+  "dynamicImportLibInfo": {},
+  "routerMap": [],
+  "hspResourcesMap": {},
+  "updateVersionInfo": {},
+  "customizedHar": false,
+  "anBuildOutPut": "D:\\cc-switch-harmonyos\\entry\\build\\default\\intermediates\\loader_out\\default\\an\\arm64-v8a",
+  "anBuildMode": "type",
+  "patchConfig": {
+    "changedFileList": "D:\\cc-switch-harmonyos\\entry\\build\\default\\intermediates\\patch\\default\\changedFileList.json"
+  }
+}

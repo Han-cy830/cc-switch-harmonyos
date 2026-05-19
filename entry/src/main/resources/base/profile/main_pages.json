@@ -1,11 +1,5 @@
 {
   "src": [
-    "pages/Index",
-    "pages/ProviderPage",
-    "pages/SettingsPage",
-    "pages/PromptPage",
-    "pages/McpPage",
-    "pages/SkillsPage",
-    "pages/SessionsPage"
+    "pages/Index"
   ]
 }

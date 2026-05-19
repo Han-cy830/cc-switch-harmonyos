@@ -2,99 +2,100 @@ export type AppId = 'claude' | 'codex' | 'gemini' | 'opencode' | 'openclaw' | 'h
 
 export type ProviderCategory = 'official' | 'third_party' | 'aggregator' | 'cloud' | 'custom';
 
-export interface Provider {
-  id: string;
-  appType: AppId;
-  name: string;
-  baseUrl: string;
-  apiKey: string;
-  model: string;
-  category: ProviderCategory;
-  iconUrl: string;
-  color: string;
-  isCurrent: boolean;
-  sortOrder: number;
-  createdAt: string;
-  updatedAt: string;
-  maxTokens: number;
-  temperature: number;
-  topP: number;
-  systemPrompt: string;
-  customHeaders: Record<string, string>;
-  usageScript: string;
+export class Provider {
+  id: string = '';
+  appType: AppId = 'claude';
+  name: string = '';
+  baseUrl: string = '';
+  apiKey: string = '';
+  model: string = '';
+  category: ProviderCategory = 'custom';
+  iconUrl: string = '';
+  color: string = '';
+  isCurrent: boolean = false;
+  sortOrder: number = 0;
+  createdAt: string = '';
+  updatedAt: string = '';
+  maxTokens: number = 4096;
+  temperature: number = 1.0;
+  topP: number = 1.0;
+  systemPrompt: string = '';
+  customHeaders: string = '{}';
+  usageScript: string = '';
 }
 
-export interface McpServer {
-  id: string;
-  name: string;
-  transport: 'stdio' | 'http' | 'sse';
-  command: string;
-  args: string[];
-  env: Record<string, string>;
-  url: string;
-  enabled: boolean;
-  appEnabled: Record<string, boolean>;
-  createdAt: string;
-  updatedAt: string;
+export class McpServer {
+  id: string = '';
+  name: string = '';
+  transport: string = 'stdio';
+  command: string = '';
+  argsStr: string = '[]';
+  envStr: string = '{}';
+  url: string = '';
+  enabled: boolean = true;
+  appEnabledStr: string = '{}';
+  createdAt: string = '';
+  updatedAt: string = '';
 }
 
-export interface Prompt {
-  id: string;
-  appType: AppId;
-  name: string;
-  content: string;
-  enabled: boolean;
-  sortOrder: number;
-  createdAt: string;
-  updatedAt: string;
+export class Prompt {
+  id: string = '';
+  appType: AppId = 'claude';
+  name: string = '';
+  content: string = '';
+  enabled: boolean = true;
+  sortOrder: number = 0;
+  createdAt: string = '';
+  updatedAt: string = '';
 }
 
-export interface AppSettings {
-  language: string;
-  theme: 'light' | 'dark' | 'system';
-  launchOnStartup: boolean;
-  silentStartup: boolean;
-  minimizeToTray: boolean;
-  showInTray: boolean;
-  enableLocalProxy: boolean;
-  proxyPort: number;
-  enableFailover: boolean;
-  visibleApps: Record<string, boolean>;
+export class AppSettings {
+  language: string = 'zh';
+  theme: string = 'system';
+  launchOnStartup: boolean = false;
+  silentStartup: boolean = false;
+  minimizeToTray: boolean = true;
+  showInTray: boolean = true;
+  enableLocalProxy: boolean = false;
+  proxyPort: number = 15721;
+  enableFailover: boolean = false;
 }
 
-export interface Skill {
-  id: string;
-  name: string;
-  description: string;
-  source: string;
-  version: string;
-  installedAt: string;
-  appEnabled: Record<string, boolean>;
+export class Skill {
+  id: string = '';
+  name: string = '';
+  description: string = '';
+  source: string = '';
+  version: string = '';
+  installedAt: string = '';
 }
 
-export interface Session {
-  id: string;
-  appType: AppId;
-  title: string;
-  startedAt: string;
-  endedAt: string;
-  messageCount: number;
-  totalTokens: number;
+export class AppConfig {
+  appId: AppId = 'claude';
+  label: string = '';
+  icon: string = '';
+  description: string = '';
 }
 
-export interface AppConfig {
-  appId: AppId;
-  label: string;
-  icon: string;
-  configPath: string;
-  description: string;
+export function getAppConfigs(): AppConfig[] {
+  const configs: AppConfig[] = [];
+  const c1: AppConfig = new AppConfig();
+  c1.appId = 'claude'; c1.label = 'Claude Code'; c1.icon = '🟠'; c1.description = 'Claude Code CLI';
+  configs.push(c1);
+  const c2: AppConfig = new AppConfig();
+  c2.appId = 'codex'; c2.label = 'Codex'; c2.icon = '🟢'; c2.description = 'OpenAI Codex CLI';
+  configs.push(c2);
+  const c3: AppConfig = new AppConfig();
+  c3.appId = 'gemini'; c3.label = 'Gemini'; c3.icon = '🔵'; c3.description = 'Google Gemini CLI';
+  configs.push(c3);
+  const c4: AppConfig = new AppConfig();
+  c4.appId = 'opencode'; c4.label = 'OpenCode'; c4.icon = '🟣'; c4.description = 'OpenCode CLI';
+  configs.push(c4);
+  const c5: AppConfig = new AppConfig();
+  c5.appId = 'openclaw'; c5.label = 'OpenClaw'; c5.icon = '🔴'; c5.description = 'OpenClaw Agent';
+  configs.push(c5);
+  const c6: AppConfig = new AppConfig();
+  c6.appId = 'hermes'; c6.label = 'Hermes'; c6.icon = '🟡'; c6.description = 'Hermes Agent';
+  configs.push(c6);
+  return configs;
 }
-
-export const APP_CONFIGS: AppConfig[] = [
-  { appId: 'claude', label: 'Claude Code', icon: '\u{1F7E0}', configPath: '~/.claude/settings.json', description: 'Claude Code CLI' },
-  { appId: 'codex', label: 'Codex', icon: '\u{1F7E2}', configPath: '~/.codex/config.json', description: 'OpenAI Codex CLI' },
-  { appId: 'gemini', label: 'Gemini', icon: '\u{1F535}', configPath: '~/.gemini/settings.json', description: 'Google Gemini CLI' },
-  { appId: 'opencode', label: 'OpenCode', icon: '\u{1F7E3}', configPath: '~/.opencode/config.json', description: 'OpenCode CLI' },
-  { appId: 'openclaw', label: 'OpenClaw', icon: '\u{1F534}', configPath: '~/.openclaw/openclaw.json', description: 'OpenClaw Agent' },
-  { appId: 'hermes', label: 'Hermes', icon: '\u{1F7E1}', configPath: '~/.hermes/config.yaml', description: 'Hermes Agent' }
-];

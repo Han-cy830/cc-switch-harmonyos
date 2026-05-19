@@ -1,14 +1,8 @@
 import { dbService } from './DatabaseService';
 import { AppSettings } from '../model/Types';
 
-const DEFAULTS: AppSettings = {
-  language: 'zh', theme: 'system', launchOnStartup: false, silentStartup: false,
-  minimizeToTray: true, showInTray: true, enableLocalProxy: false, proxyPort: 15721,
-  enableFailover: false, visibleApps: { claude: true, codex: true, gemini: true, opencode: true, openclaw: true, hermes: true }
-};
-
 export class SettingsService {
-  private cache: AppSettings = { ...DEFAULTS };
+  private cache: AppSettings = new AppSettings();
 
   async load(): Promise<AppSettings> {
     const store = dbService.getStore();
@@ -18,21 +12,44 @@ export class SettingsService {
       while (rs.goToNextRow()) {
         const key = rs.getString(rs.getColumnIndex('key')).replace('s_', '');
         const val = rs.getString(rs.getColumnIndex('value'));
-        try { (this.cache as Record<string, Object>)[key] = JSON.parse(val); } catch { (this.cache as Record<string, Object>)[key] = val; }
+        if (key === 'language') this.cache.language = val;
+        else if (key === 'theme') this.cache.theme = val;
+        else if (key === 'launchOnStartup') this.cache.launchOnStartup = val === 'true';
+        else if (key === 'silentStartup') this.cache.silentStartup = val === 'true';
+        else if (key === 'minimizeToTray') this.cache.minimizeToTray = val === 'true';
+        else if (key === 'showInTray') this.cache.showInTray = val === 'true';
+        else if (key === 'enableLocalProxy') this.cache.enableLocalProxy = val === 'true';
+        else if (key === 'proxyPort') this.cache.proxyPort = parseInt(val);
+        else if (key === 'enableFailover') this.cache.enableFailover = val === 'true';
       }
       rs.close();
-    } catch { /* use defaults */ }
+    } catch (e) {
+      console.error('settings load failed: ' + JSON.stringify(e));
+    }
     return this.cache;
   }
 
-  async get(): Promise<AppSettings> { return this.cache; }
+  async get(): Promise<AppSettings> {
+    return this.cache;
+  }
 
-  async update(key: keyof AppSettings, value: Object): Promise<void> {
+  async update(key: string, value: string): Promise<void> {
     const store = dbService.getStore();
     if (!store) return;
-    (this.cache as Record<string, Object>)[key] = value;
-    const valStr = typeof value === 'string' ? value : JSON.stringify(value);
-    await store.executeSql('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)', [`s_${key}`, valStr]);
+    try {
+      if (key === 'language') this.cache.language = value;
+      else if (key === 'theme') this.cache.theme = value;
+      else if (key === 'launchOnStartup') this.cache.launchOnStartup = value === 'true';
+      else if (key === 'silentStartup') this.cache.silentStartup = value === 'true';
+      else if (key === 'minimizeToTray') this.cache.minimizeToTray = value === 'true';
+      else if (key === 'showInTray') this.cache.showInTray = value === 'true';
+      else if (key === 'enableLocalProxy') this.cache.enableLocalProxy = value === 'true';
+      else if (key === 'proxyPort') this.cache.proxyPort = parseInt(value);
+      else if (key === 'enableFailover') this.cache.enableFailover = value === 'true';
+      await store.executeSql('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)', ['s_' + key, value]);
+    } catch (e) {
+      console.error('settings update failed: ' + JSON.stringify(e));
+    }
   }
 }
 
