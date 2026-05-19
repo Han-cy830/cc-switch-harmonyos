@@ -1,5 +1,6 @@
 import { Provider, AppId, AppConfig, getAppConfigs } from '../model/Types';
 import { providerService } from '../service/ProviderService';
+import { ProviderPreset, getPresetsForApp } from '../model/ProviderPresets';
 
 @Component
 export struct ProviderPage {
@@ -13,6 +14,9 @@ export struct ProviderPage {
   @State isEdit: boolean = false;
   @State editId: string = '';
   @State editAppType: AppId = 'claude';
+  @State showPresetDialog: boolean = false;
+  @State presets: ProviderPreset[] = [];
+  @State presetCategory: string = 'all';
 
   private appConfigs: AppConfig[] = getAppConfigs();
 
@@ -53,12 +57,9 @@ export struct ProviderPage {
             .backgroundColor('#FF6B35')
             .fontColor('#FFF')
             .onClick(() => {
-              this.isEdit = false;
-              this.editName = '';
-              this.editUrl = '';
-              this.editKey = '';
-              this.editModel = '';
-              this.showDialog = true;
+              this.presets = getPresetsForApp(this.currentApp);
+              this.presetCategory = 'all';
+              this.showPresetDialog = true;
             })
         }
         .width('100%')
@@ -73,7 +74,9 @@ export struct ProviderPage {
               .fontColor('#FFF')
               .margin({ top: 16 })
               .onClick(() => {
-                this.showDialog = true;
+                this.presets = getPresetsForApp(this.currentApp);
+                this.presetCategory = 'all';
+                this.showPresetDialog = true;
               })
           }
           .width('100%')
@@ -166,6 +169,9 @@ export struct ProviderPage {
       if (this.showDialog) {
         this.DialogContent()
       }
+      if (this.showPresetDialog) {
+        this.PresetDialogContent()
+      }
     }
     .width('100%')
     .height('100%')
@@ -251,5 +257,113 @@ export struct ProviderPage {
     .backgroundColor('#00000060')
     .justifyContent(FlexAlign.Center)
     .onClick(() => { this.showDialog = false; })
+  }
+
+  private getFilteredPresets(): ProviderPreset[] {
+    if (this.presetCategory === 'all') return this.presets;
+    const result: ProviderPreset[] = [];
+    for (let i = 0; i < this.presets.length; i++) {
+      if (this.presets[i].category === this.presetCategory) {
+        result.push(this.presets[i]);
+      }
+    }
+    return result;
+  }
+
+  @Builder
+  PresetDialogContent() {
+    Column() {
+      Column() {
+        Row() {
+          Text('选择提供商预设').fontSize(20).fontWeight(FontWeight.Bold)
+          Blank()
+          Button('自定义添加')
+            .type(ButtonType.Capsule)
+            .backgroundColor('#F0F0F0')
+            .fontColor('#666')
+            .fontSize(12)
+            .onClick(() => {
+              this.showPresetDialog = false;
+              this.isEdit = false;
+              this.editName = '';
+              this.editUrl = '';
+              this.editKey = '';
+              this.editModel = '';
+              this.showDialog = true;
+            })
+        }.width('100%').margin({ bottom: 16 })
+
+        Row({ space: 8 }) {
+          Button('全部').type(ButtonType.Capsule)
+            .backgroundColor(this.presetCategory === 'all' ? '#FF6B35' : '#F0F0F0')
+            .fontColor(this.presetCategory === 'all' ? '#FFF' : '#666')
+            .fontSize(12).height(32)
+            .onClick(() => { this.presetCategory = 'all'; })
+          Button('官方').type(ButtonType.Capsule)
+            .backgroundColor(this.presetCategory === 'official' ? '#FF6B35' : '#F0F0F0')
+            .fontColor(this.presetCategory === 'official' ? '#FFF' : '#666')
+            .fontSize(12).height(32)
+            .onClick(() => { this.presetCategory = 'official'; })
+          Button('中转').type(ButtonType.Capsule)
+            .backgroundColor(this.presetCategory === 'aggregator' ? '#FF6B35' : '#F0F0F0')
+            .fontColor(this.presetCategory === 'aggregator' ? '#FFF' : '#666')
+            .fontSize(12).height(32)
+            .onClick(() => { this.presetCategory = 'aggregator'; })
+          Button('云厂商').type(ButtonType.Capsule)
+            .backgroundColor(this.presetCategory === 'cloud' ? '#FF6B35' : '#F0F0F0')
+            .fontColor(this.presetCategory === 'cloud' ? '#FFF' : '#666')
+            .fontSize(12).height(32)
+            .onClick(() => { this.presetCategory = 'cloud'; })
+          Button('第三方').type(ButtonType.Capsule)
+            .backgroundColor(this.presetCategory === 'third_party' ? '#FF6B35' : '#F0F0F0')
+            .fontColor(this.presetCategory === 'third_party' ? '#FFF' : '#666')
+            .fontSize(12).height(32)
+            .onClick(() => { this.presetCategory = 'third_party'; })
+        }.width('100%').margin({ bottom: 12 })
+
+        List({ space: 8 }) {
+          ForEach(this.getFilteredPresets(), (preset: ProviderPreset) => {
+            ListItem() {
+              Row() {
+                Circle({ width: 10, height: 10 }).fill(preset.color)
+                Column() {
+                  Text(preset.name).fontSize(14).fontWeight(FontWeight.Medium)
+                  Text(preset.description).fontSize(12).fontColor('#888').margin({ top: 2 })
+                  Text(preset.model).fontSize(11).fontColor('#AAA').margin({ top: 2 })
+                }.alignItems(HorizontalAlign.Start).margin({ left: 10 }).layoutWeight(1)
+                Button('添加')
+                  .type(ButtonType.Capsule)
+                  .backgroundColor('#FF6B35')
+                  .fontColor('#FFF')
+                  .fontSize(12).height(32)
+                  .onClick(async () => {
+                    const p = new Provider();
+                    p.id = preset.id;
+                    p.appType = preset.appType as AppId;
+                    p.name = preset.name;
+                    p.baseUrl = preset.baseUrl;
+                    p.model = preset.model;
+                    p.category = preset.category;
+                    p.color = preset.color;
+                    await providerService.add(p);
+                    this.showPresetDialog = false;
+                    await this.loadData();
+                  })
+              }.width('100%').padding(12).backgroundColor('#FAFAFA').borderRadius(8)
+            }
+          })
+        }.width('100%').layoutWeight(1)
+
+        Row() {
+          Button('关闭')
+            .type(ButtonType.Capsule)
+            .backgroundColor('#F0F0F0')
+            .fontColor('#666')
+            .layoutWeight(1)
+            .onClick(() => { this.showPresetDialog = false; })
+        }.width('100%').margin({ top: 12 })
+      }.width(520).height(500).padding(24).backgroundColor('#FFF').borderRadius(16)
+    }.width('100%').height('100%').backgroundColor('#00000060').justifyContent(FlexAlign.Center)
+      .onClick(() => { this.showPresetDialog = false; })
   }
 }

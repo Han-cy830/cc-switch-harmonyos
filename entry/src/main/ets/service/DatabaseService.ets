@@ -1,5 +1,7 @@
 import { relationalStore } from '@kit.ArkData';
 import { common } from '@kit.AbilityKit';
+import { getAllPresets, ProviderPreset } from '../model/ProviderPresets';
+import { AppId } from '../model/Types';
 
 const DB_NAME = 'cc_switch.db';
 
@@ -69,30 +71,15 @@ export class DatabaseService {
       rs.close();
       if (count > 0) return;
       const now = new Date().toISOString();
-      await this.store.executeSql(
-        "INSERT INTO providers (id,app_type,name,base_url,model,category,color,is_current,created_at,updated_at) VALUES ('claude-official','claude','Anthropic (Official)','https://api.anthropic.com','claude-sonnet-4-20250514','official','#FF6B35',1,?,?)",
-        [now, now]
-      );
-      await this.store.executeSql(
-        "INSERT INTO providers (id,app_type,name,base_url,model,category,color,is_current,created_at,updated_at) VALUES ('codex-official','codex','OpenAI (Official)','https://api.openai.com/v1','codex-mini','official','#10A37F',1,?,?)",
-        [now, now]
-      );
-      await this.store.executeSql(
-        "INSERT INTO providers (id,app_type,name,base_url,model,category,color,is_current,created_at,updated_at) VALUES ('gemini-official','gemini','Google (Official)','https://generativelanguage.googleapis.com/v1beta','gemini-2.5-flash','official','#4285F4',1,?,?)",
-        [now, now]
-      );
-      await this.store.executeSql(
-        "INSERT INTO providers (id,app_type,name,base_url,model,category,color,is_current,created_at,updated_at) VALUES ('opencode-default','opencode','Default','','','official','#9C27B0',1,?,?)",
-        [now, now]
-      );
-      await this.store.executeSql(
-        "INSERT INTO providers (id,app_type,name,base_url,model,category,color,is_current,created_at,updated_at) VALUES ('openclaw-default','openclaw','Default','','','official','#F44336',1,?,?)",
-        [now, now]
-      );
-      await this.store.executeSql(
-        "INSERT INTO providers (id,app_type,name,base_url,model,category,color,is_current,created_at,updated_at) VALUES ('hermes-default','hermes','Default','','','official','#FFC107',1,?,?)",
-        [now, now]
-      );
+      const presets = getAllPresets();
+      for (let i = 0; i < presets.length; i++) {
+        const p = presets[i];
+        const isFirst = (p.id.endsWith('-official') || p.id.endsWith('-default')) ? 1 : 0;
+        await this.store.executeSql(
+          'INSERT INTO providers (id,app_type,name,base_url,model,category,color,is_current,sort_order,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
+          [p.id, p.appType, p.name, p.baseUrl, p.model, p.category, p.color, isFirst, i, now, now]
+        );
+      }
     } catch (e) {
       console.error('seedDefaults failed: ' + JSON.stringify(e));
     }

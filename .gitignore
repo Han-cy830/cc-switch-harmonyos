@@ -1,4 +1,5 @@
 /build/
+**/build/
 /node_modules/
 /.hvigor/
 /.idea/
@@ -8,3 +9,4 @@
 .DS_Store
 Thumbs.db
 *.log
+oh_modules/
