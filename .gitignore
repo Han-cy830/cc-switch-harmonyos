@@ -1,0 +1,10 @@
+/build/
+/node_modules/
+/.hvigor/
+/.idea/
+*.har
+*.hap
+.vscode/
+.DS_Store
+Thumbs.db
+*.log

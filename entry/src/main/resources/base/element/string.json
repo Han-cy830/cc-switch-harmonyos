@@ -1,0 +1,7 @@
+{
+  "string": [
+    { "name": "module_desc", "value": "CC Switch for HarmonyOS" },
+    { "name": "ability_desc", "value": "CC Switch - AI Coding Assistant Manager" },
+    { "name": "app_name", "value": "CC Switch" }
+  ]
+}
