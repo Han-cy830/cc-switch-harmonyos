@@ -1,6 +1,6 @@
 {
   "app": {
-    "bundleName": "com.ccswitch.harmonyos",
+    "bundleName": "com.ccswitch.app",
     "vendor": "CCSwitch",
     "versionCode": 1000000,
     "versionName": "1.0.0",
