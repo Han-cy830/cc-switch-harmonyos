@@ -1,6 +1,8 @@
 import { Provider, AppId, AppConfig, getAppConfigs } from '../model/Types';
 import { providerService } from '../service/ProviderService';
 import { ProviderPreset, getPresetsForApp } from '../model/ProviderPresets';
+import { pasteboard } from '@kit.BasicServicesDesignKit';
+import { promptAction } from '@kit.ArkUI';
 
 @Component
 export struct ProviderPage {
@@ -17,6 +19,8 @@ export struct ProviderPage {
   @State showPresetDialog: boolean = false;
   @State presets: ProviderPreset[] = [];
   @State presetCategory: string = 'all';
+  @State showConfigDialog: boolean = false;
+  @State configContent: string = '';
 
   private appConfigs: AppConfig[] = getAppConfigs();
 
@@ -35,6 +39,31 @@ export struct ProviderPage {
       }
     }
     return this.appConfigs[0];
+  }
+
+  private generateConfig(p: Provider): string {
+    if (this.currentApp === 'claude') {
+      return JSON.stringify({
+        "env": {
+          "ANTHROPIC_BASE_URL": p.baseUrl,
+          "ANTHROPIC_API_KEY": p.apiKey,
+          "ANTHROPIC_MODEL": p.model
+        }
+      }, null, 2);
+    } else if (this.currentApp === 'codex') {
+      return JSON.stringify({
+        "model": p.model,
+        "api_base_url": p.baseUrl,
+        "api_key": p.apiKey
+      }, null, 2);
+    } else if (this.currentApp === 'gemini') {
+      return JSON.stringify({
+        "GEMINI_API_KEY": p.apiKey,
+        "GEMINI_API_BASE": p.baseUrl,
+        "GEMINI_MODEL": p.model
+      }, null, 2);
+    }
+    return JSON.stringify({ baseUrl: p.baseUrl, apiKey: p.apiKey, model: p.model }, null, 2);
   }
 
   build() {
@@ -122,6 +151,16 @@ export struct ProviderPage {
                         await providerService.switchTo(p.id, this.currentApp);
                         await this.loadData();
                       })
+                    Button('复制配置')
+                      .type(ButtonType.Capsule)
+                      .backgroundColor('#E3F2FD')
+                      .fontColor('#1976D2')
+                      .fontSize(12)
+                      .height(32)
+                      .onClick(() => {
+                        this.configContent = this.generateConfig(p);
+                        this.showConfigDialog = true;
+                      })
                     Button('编辑')
                       .type(ButtonType.Capsule)
                       .backgroundColor('#F0F0F0')
@@ -171,6 +210,9 @@ export struct ProviderPage {
       }
       if (this.showPresetDialog) {
         this.PresetDialogContent()
+      }
+      if (this.showConfigDialog) {
+        this.ConfigDialogContent()
       }
     }
     .width('100%')
@@ -365,5 +407,46 @@ export struct ProviderPage {
       }.width(520).height(500).padding(24).backgroundColor('#FFF').borderRadius(16)
     }.width('100%').height('100%').backgroundColor('#00000060').justifyContent(FlexAlign.Center)
       .onClick(() => { this.showPresetDialog = false; })
+  }
+
+  @Builder
+  ConfigDialogContent() {
+    Column() {
+      Column() {
+        Text('配置信息').fontSize(20).fontWeight(FontWeight.Bold).margin({ bottom: 16 })
+        Text(this.getAppCfg().label === 'Claude Code' ? '将以下内容添加到 ~/.claude.json 的 env 字段中：' :
+          this.getAppCfg().label === 'Codex' ? '将以下内容添加到 ~/.codex/config.json 中：' :
+            '将以下内容添加到 ~/.gemini/config.json 中：')
+          .fontSize(14).fontColor('#666').margin({ bottom: 12 })
+        TextArea({ text: this.configContent })
+          .width('100%').height(200).fontSize(12).fontColor('#333')
+          .backgroundColor('#F5F5F5').borderRadius(8).enabled(false)
+        Row({ space: 12 }) {
+          Button('关闭')
+            .type(ButtonType.Capsule)
+            .backgroundColor('#F0F0F0')
+            .fontColor('#666')
+            .layoutWeight(1)
+            .onClick(() => { this.showConfigDialog = false; })
+          Button('复制到剪贴板')
+            .type(ButtonType.Capsule)
+            .backgroundColor('#FF6B35')
+            .fontColor('#FFF')
+            .layoutWeight(1)
+            .onClick(async () => {
+              try {
+                const pasteboardData = pasteboard.createData(pasteboard.MIMETYPE_TEXT_PLAIN, this.configContent);
+                const systemPasteboard = pasteboard.getSystemPasteboard();
+                await systemPasteboard.setData(pasteboardData);
+                promptAction.showToast({ message: '已复制到剪贴板' });
+              } catch (e) {
+                console.error('Copy failed: ' + JSON.stringify(e));
+              }
+              this.showConfigDialog = false;
+            })
+        }.width('100%').margin({ top: 16 })
+      }.width(500).padding(24).backgroundColor('#FFF').borderRadius(16)
+    }.width('100%').height('100%').backgroundColor('#00000060').justifyContent(FlexAlign.Center)
+      .onClick(() => { this.showConfigDialog = false; })
   }
 }
