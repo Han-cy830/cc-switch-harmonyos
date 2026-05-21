@@ -1,8 +1,6 @@
 import { Provider, AppId, AppConfig, getAppConfigs } from '../model/Types';
 import { providerService } from '../service/ProviderService';
 import { ProviderPreset, getPresetsForApp } from '../model/ProviderPresets';
-import { fs } from '@kit.CoreFileKit';
-import { common } from '@kit.AbilityKit';
 
 @Component
 export struct ProviderPage {
@@ -50,37 +48,6 @@ export struct ProviderPage {
       return '{\n  "GEMINI_API_KEY": "' + p.apiKey + '",\n  "GEMINI_API_BASE": "' + p.baseUrl + '",\n  "GEMINI_MODEL": "' + p.model + '"\n}';
     }
     return '{\n  "baseUrl": "' + p.baseUrl + '",\n  "apiKey": "' + p.apiKey + '",\n  "model": "' + p.model + '"\n}';
-  }
-
-  private getConfigFilePath(): string {
-    if (this.currentApp === 'claude') {
-      return '/data/cc-switch/claude_config.json';
-    } else if (this.currentApp === 'codex') {
-      return '/data/cc-switch/codex_config.json';
-    } else if (this.currentApp === 'gemini') {
-      return '/data/cc-switch/gemini_config.json';
-    }
-    return '/data/cc-switch/config.json';
-  }
-
-  private async writeConfigToFile(p: Provider): Promise<boolean> {
-    try {
-      const config = this.generateConfig(p);
-      const filePath = this.getConfigFilePath();
-      const dir = '/data/cc-switch';
-      try {
-        await fs.mkdir(dir);
-      } catch (e) {
-        // Directory may already exist
-      }
-      const file = await fs.open(filePath, fs.OpenMode.CREATE | fs.OpenMode.WRITE_ONLY | fs.OpenMode.TRUNC);
-      await fs.write(file.fd, config);
-      await fs.close(file);
-      return true;
-    } catch (e) {
-      console.error('Write config failed: ' + JSON.stringify(e));
-      return false;
-    }
   }
 
   build() {
@@ -166,11 +133,8 @@ export struct ProviderPage {
                       .height(32)
                       .onClick(async () => {
                         await providerService.switchTo(p.id, this.currentApp);
-                        const success = await this.writeConfigToFile(p);
-                        if (success) {
-                          this.configContent = this.generateConfig(p);
-                          this.showConfigDialog = true;
-                        }
+                        this.configContent = this.generateConfig(p);
+                        this.showConfigDialog = true;
                         await this.loadData();
                       })
                     Button('复制配置')
@@ -436,17 +400,13 @@ export struct ProviderPage {
     Column() {
       Column() {
         Text('激活成功').fontSize(20).fontWeight(FontWeight.Bold).fontColor('#4CAF50').margin({ bottom: 16 })
-        Text('配置已保存到：').fontSize(14).fontColor('#666').margin({ bottom: 8 })
-        Text(this.getConfigFilePath()).fontSize(13).fontColor('#1976D2').backgroundColor('#E3F2FD').padding(8).borderRadius(4)
-        Text('使用方法：').fontSize(14).fontWeight(FontWeight.Medium).margin({ top: 16, bottom: 8 })
-        Text(this.getAppCfg().label === 'Claude Code' ?
-          '1. 打开终端\n2. 运行: cat ' + this.getConfigFilePath() + ' | jq .env\n3. 将环境变量添加到 ~/.bashrc 或 ~/.zshrc' :
-          this.getAppCfg().label === 'Codex' ?
-            '1. 打开终端\n2. 运行: cp ' + this.getConfigFilePath() + ' ~/.codex/config.json\n3. 重启 Codex CLI' :
-            '1. 打开终端\n2. 运行: cp ' + this.getConfigFilePath() + ' ~/.gemini/config.json\n3. 重启 Gemini CLI')
-          .fontSize(13).fontColor('#666').margin({ bottom: 16 })
+        Text('请将以下配置复制到对应配置文件中：').fontSize(14).fontColor('#666').margin({ bottom: 12 })
+        Text(this.getAppCfg().label === 'Claude Code' ? '配置文件路径：~/.claude.json' :
+          this.getAppCfg().label === 'Codex' ? '配置文件路径：~/.codex/config.json' :
+            '配置文件路径：~/.gemini/config.json')
+          .fontSize(13).fontColor('#1976D2').backgroundColor('#E3F2FD').padding(8).borderRadius(4).margin({ bottom: 12 })
         TextArea({ text: this.configContent })
-          .width('100%').height(150).fontSize(12).fontColor('#333')
+          .width('100%').height(200).fontSize(12).fontColor('#333')
           .backgroundColor('#F5F5F5').borderRadius(8).enabled(false)
         Row() {
           Button('关闭')
@@ -456,7 +416,7 @@ export struct ProviderPage {
             .layoutWeight(1)
             .onClick(() => { this.showConfigDialog = false; })
         }.width('100%').margin({ top: 16 })
-      }.width(520).padding(24).backgroundColor('#FFF').borderRadius(16)
+      }.width(500).padding(24).backgroundColor('#FFF').borderRadius(16)
     }.width('100%').height('100%').backgroundColor('#00000060').justifyContent(FlexAlign.Center)
       .onClick(() => { this.showConfigDialog = false; })
   }
