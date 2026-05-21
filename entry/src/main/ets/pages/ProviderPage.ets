@@ -1,6 +1,7 @@
 import { Provider, AppId, AppConfig, getAppConfigs } from '../model/Types';
 import { providerService } from '../service/ProviderService';
 import { ProviderPreset, getPresetsForApp } from '../model/ProviderPresets';
+import { promptAction } from '@kit.ArkUI';
 
 @Component
 export struct ProviderPage {
@@ -19,6 +20,8 @@ export struct ProviderPage {
   @State presetCategory: string = 'all';
   @State showConfigDialog: boolean = false;
   @State configContent: string = '';
+  @State showTerminalDialog: boolean = false;
+  @State terminalCommands: string = '';
 
   private appConfigs: AppConfig[] = getAppConfigs();
 
@@ -48,6 +51,18 @@ export struct ProviderPage {
       return '{\n  "GEMINI_API_KEY": "' + p.apiKey + '",\n  "GEMINI_API_BASE": "' + p.baseUrl + '",\n  "GEMINI_MODEL": "' + p.model + '"\n}';
     }
     return '{\n  "baseUrl": "' + p.baseUrl + '",\n  "apiKey": "' + p.apiKey + '",\n  "model": "' + p.model + '"\n}';
+  }
+
+  private generateTerminalCommands(p: Provider): string {
+    const config = this.generateConfig(p);
+    if (this.currentApp === 'claude') {
+      return '# 1. 设置环境变量\nexport ANTHROPIC_BASE_URL="' + p.baseUrl + '"\nexport ANTHROPIC_API_KEY="' + p.apiKey + '"\nexport ANTHROPIC_MODEL="' + p.model + '"\n\n# 2. 运行 Claude Code\nclaude';
+    } else if (this.currentApp === 'codex') {
+      return '# 1. 创建配置文件\nmkdir -p ~/.codex\ncat > ~/.codex/config.json << \'EOF\'\n' + config + '\nEOF\n\n# 2. 运行 Codex\ncodex';
+    } else if (this.currentApp === 'gemini') {
+      return '# 1. 设置环境变量\nexport GEMINI_API_KEY="' + p.apiKey + '"\nexport GEMINI_API_BASE="' + p.baseUrl + '"\nexport GEMINI_MODEL="' + p.model + '"\n\n# 2. 运行 Gemini CLI\ngemini';
+    }
+    return '# 设置环境变量\nexport API_KEY="' + p.apiKey + '"\nexport BASE_URL="' + p.baseUrl + '"\nexport MODEL="' + p.model + '"';
   }
 
   build() {
@@ -147,6 +162,16 @@ export struct ProviderPage {
                         this.configContent = this.generateConfig(p);
                         this.showConfigDialog = true;
                       })
+                    Button('生成命令')
+                      .type(ButtonType.Capsule)
+                      .backgroundColor('#E8F5E9')
+                      .fontColor('#2E7D32')
+                      .fontSize(12)
+                      .height(32)
+                      .onClick(() => {
+                        this.terminalCommands = this.generateTerminalCommands(p);
+                        this.showTerminalDialog = true;
+                      })
                     Button('编辑')
                       .type(ButtonType.Capsule)
                       .backgroundColor('#F0F0F0')
@@ -199,6 +224,9 @@ export struct ProviderPage {
       }
       if (this.showConfigDialog) {
         this.ConfigDialogContent()
+      }
+      if (this.showTerminalDialog) {
+        this.TerminalDialogContent()
       }
     }
     .width('100%')
@@ -419,5 +447,28 @@ export struct ProviderPage {
       }.width(500).padding(24).backgroundColor('#FFF').borderRadius(16)
     }.width('100%').height('100%').backgroundColor('#00000060').justifyContent(FlexAlign.Center)
       .onClick(() => { this.showConfigDialog = false; })
+  }
+
+  @Builder
+  TerminalDialogContent() {
+    Column() {
+      Column() {
+        Text('终端命令').fontSize(20).fontWeight(FontWeight.Bold).margin({ bottom: 16 })
+        Text('复制以下命令到终端中执行：').fontSize(14).fontColor('#666').margin({ bottom: 12 })
+        TextArea({ text: this.terminalCommands })
+          .width('100%').height(250).fontSize(12).fontColor('#333')
+          .backgroundColor('#F5F5F5').borderRadius(8).enabled(false)
+        Text('提示：请确保已安装对应的 CLI 工具').fontSize(12).fontColor('#999').margin({ top: 8 })
+        Row() {
+          Button('关闭')
+            .type(ButtonType.Capsule)
+            .backgroundColor('#FF6B35')
+            .fontColor('#FFF')
+            .layoutWeight(1)
+            .onClick(() => { this.showTerminalDialog = false; })
+        }.width('100%').margin({ top: 16 })
+      }.width(520).padding(24).backgroundColor('#FFF').borderRadius(16)
+    }.width('100%').height('100%').backgroundColor('#00000060').justifyContent(FlexAlign.Center)
+      .onClick(() => { this.showTerminalDialog = false; })
   }
 }
