@@ -1,8 +1,6 @@
 import { Provider, AppId, AppConfig, getAppConfigs } from '../model/Types';
 import { providerService } from '../service/ProviderService';
 import { ProviderPreset, getPresetsForApp } from '../model/ProviderPresets';
-import { pasteboard } from '@kit.BasicServicesDesignKit';
-import { promptAction } from '@kit.ArkUI';
 
 @Component
 export struct ProviderPage {
@@ -43,27 +41,13 @@ export struct ProviderPage {
 
   private generateConfig(p: Provider): string {
     if (this.currentApp === 'claude') {
-      return JSON.stringify({
-        "env": {
-          "ANTHROPIC_BASE_URL": p.baseUrl,
-          "ANTHROPIC_API_KEY": p.apiKey,
-          "ANTHROPIC_MODEL": p.model
-        }
-      }, null, 2);
+      return '{\n  "env": {\n    "ANTHROPIC_BASE_URL": "' + p.baseUrl + '",\n    "ANTHROPIC_API_KEY": "' + p.apiKey + '",\n    "ANTHROPIC_MODEL": "' + p.model + '"\n  }\n}';
     } else if (this.currentApp === 'codex') {
-      return JSON.stringify({
-        "model": p.model,
-        "api_base_url": p.baseUrl,
-        "api_key": p.apiKey
-      }, null, 2);
+      return '{\n  "model": "' + p.model + '",\n  "api_base_url": "' + p.baseUrl + '",\n  "api_key": "' + p.apiKey + '"\n}';
     } else if (this.currentApp === 'gemini') {
-      return JSON.stringify({
-        "GEMINI_API_KEY": p.apiKey,
-        "GEMINI_API_BASE": p.baseUrl,
-        "GEMINI_MODEL": p.model
-      }, null, 2);
+      return '{\n  "GEMINI_API_KEY": "' + p.apiKey + '",\n  "GEMINI_API_BASE": "' + p.baseUrl + '",\n  "GEMINI_MODEL": "' + p.model + '"\n}';
     }
-    return JSON.stringify({ baseUrl: p.baseUrl, apiKey: p.apiKey, model: p.model }, null, 2);
+    return '{\n  "baseUrl": "' + p.baseUrl + '",\n  "apiKey": "' + p.apiKey + '",\n  "model": "' + p.model + '"\n}';
   }
 
   build() {
@@ -421,29 +405,14 @@ export struct ProviderPage {
         TextArea({ text: this.configContent })
           .width('100%').height(200).fontSize(12).fontColor('#333')
           .backgroundColor('#F5F5F5').borderRadius(8).enabled(false)
-        Row({ space: 12 }) {
+        Text('请手动选择上方文本并复制').fontSize(12).fontColor('#999').margin({ top: 8 })
+        Row() {
           Button('关闭')
-            .type(ButtonType.Capsule)
-            .backgroundColor('#F0F0F0')
-            .fontColor('#666')
-            .layoutWeight(1)
-            .onClick(() => { this.showConfigDialog = false; })
-          Button('复制到剪贴板')
             .type(ButtonType.Capsule)
             .backgroundColor('#FF6B35')
             .fontColor('#FFF')
             .layoutWeight(1)
-            .onClick(async () => {
-              try {
-                const pasteboardData = pasteboard.createData(pasteboard.MIMETYPE_TEXT_PLAIN, this.configContent);
-                const systemPasteboard = pasteboard.getSystemPasteboard();
-                await systemPasteboard.setData(pasteboardData);
-                promptAction.showToast({ message: '已复制到剪贴板' });
-              } catch (e) {
-                console.error('Copy failed: ' + JSON.stringify(e));
-              }
-              this.showConfigDialog = false;
-            })
+            .onClick(() => { this.showConfigDialog = false; })
         }.width('100%').margin({ top: 16 })
       }.width(500).padding(24).backgroundColor('#FFF').borderRadius(16)
     }.width('100%').height('100%').backgroundColor('#00000060').justifyContent(FlexAlign.Center)
